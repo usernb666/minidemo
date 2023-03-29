@@ -1,0 +1,25 @@
+TOOLCHAIN_PATH ?= /home/cheney/nfs/work/D9/d9_rootfs/output/host
+CROSS_COMPILE ?= $(TOOLCHAIN_PATH)/bin/aarch64-linux-gnu-
+
+
+
+CC = ${CROSS_COMPILE}gcc
+CXX = ${CROSS_COMPILE}g++
+
+CFLAGS = -Wall
+CFLAGS += -I./ethercatlib/arm64/include
+LDFLAGS = -L./ethercatlib/arm64/lib -lethercat
+
+
+PKG_CONFIG_SYSROOT_DIR = $(TOOLCHAIN_PATH)/arm-linux-gnueabihf/libc
+XENO_CONFIG = $(PKG_CONFIG_SYSROOT_DIR)/usr/xenomai/bin/xeno-config
+XENO_CFLAGS = $(shell DESTDIR=${PKG_CONFIG_SYSROOT_DIR} $(XENO_CONFIG) --posix --cflags)
+XENO_LDFLAGS = $(shell DESTDIR=${PKG_CONFIG_SYSROOT_DIR} $(XENO_CONFIG) --posix --ldflags)
+
+all:
+	# ${CC} main.c timer.c ${CFLAGS} ${LDFLAGS} -o arm64_ethercat_demo
+	# ${CC} xenomai_main.c timer.c ${CFLAGS} ${LDFLAGS} $(XENO_CFLAGS) $(XENO_LDFLAGS) -o arm64_ethercat_xenomai_demo
+	${CC} xenomai_main.c timer.c ${CFLAGS} ${LDFLAGS} -o arm64_ethercat_demo_new
+
+clean:
+	rm -rf a.out arm64_ethercat_demo* arm64_ethercat_xenomai_demo
